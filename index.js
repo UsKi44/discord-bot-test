@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: ".env.test" });
 
 const fs = require("node:fs");
 const path = require("node:path");
@@ -47,10 +47,11 @@ for (const folder of commandFolders) {
   }
 }
 
+// Receiving command interactions ( when command is used event is triggered)
 client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
-  const command = interaction.client.commands.get(interaction.commandName);
+  const command = client.commands.get(interaction.commandName);
 
   if (!command) {
     console.error(`No command matching ${interaction.commandName} was found.`);
