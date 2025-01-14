@@ -29,23 +29,23 @@ module.exports = {
         return interaction.followUp("No results found!");
       }
 
-      const { track } = await interaction.client.player.play(
-        interaction.member.voice.channel,
-        searchResult,
-        {
-          nodeOptions: {
-            metadata: {
-              channel: interaction.channel,
-              client: interaction.client,
-              requestedBy: interaction.user,
-            },
-            leaveOnEmpty: true,
-            leaveOnEmptyCooldown: 300000, // 5 minutes
-            leaveOnEnd: true,
-            leaveOnEndCooldown: 300000, // 5 minutes
-          },
-        }
-      );
+      const queue = interaction.client.player.nodes.create(interaction.guild, {
+        metadata: {
+          channel: interaction.channel,
+          client: interaction.client,
+          requestedBy: interaction.user,
+        },
+        leaveOnEmpty: true,
+        leaveOnEmptyCooldown: 300000, // 5 minutes
+        leaveOnEnd: true,
+        leaveOnEndCooldown: 300000, // 5 minutes
+      });
+
+      if (!queue.connection) {
+        await queue.connect(interaction.member.voice.channel);
+      }
+
+      const { track } = await queue.play(searchResult.tracks[0]);
 
       return interaction.followUp(`✅ Track **${track.title}** queued!`);
     } catch (error) {
