@@ -2,16 +2,49 @@ require("dotenv").config({ path: ".env.test" });
 
 const fs = require("node:fs");
 const path = require("node:path");
-const {
-  Client,
-  GatewayIntentBits,
-  Events,
-  MessageFlags,
-  Collection,
-} = require("discord.js");
-const token = process.env.DISCORD_TOKEN;
+const { Client, GatewayIntentBits, Collection } = require("discord.js");
+const { Player } = require("discord-player");
+const { DefaultExtractors } = require("@discord-player/extractor");
+const libsodium = require("libsodium-wrappers");
+const setupPlayerEvents = require("./events/playerEvents");
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
+});
+
+// Initialize player
+async function initializePlayer() {
+  await libsodium.ready;
+
+  // Create new player instance
+  const player = new Player(client);
+
+  // Add player to client
+  client.player = player;
+
+  // Create queues property
+  client.queues = new Map();
+
+  // Load extractors using the new method
+  await player.extractors.loadMulti(DefaultExtractors);
+
+  setupPlayerEvents(player);
+}
+
+// Make sure to await the initialization
+(async () => {
+  try {
+    await initializePlayer();
+    // Rest of your bot initialization code
+  } catch (error) {
+    console.error("Failed to initialize player:", error);
+  }
+})();
 
 // Events loader (loading events from events folder)
 const eventsPath = path.join(__dirname, "events");
@@ -30,7 +63,7 @@ for (const file of eventFiles) {
   }
 }
 
-client.login(token);
+client.login(process.env.DISCORD_TOKEN);
 
 client.commands = new Collection();
 
