@@ -7,6 +7,7 @@ const { Player } = require("discord-player");
 const { DefaultExtractors } = require("@discord-player/extractor");
 const libsodium = require("libsodium-wrappers");
 const setupPlayerEvents = require("./events/playerEvents");
+const { YoutubeiExtractor } = require("discord-player-youtubei");
 
 const client = new Client({
   intents: [
@@ -32,6 +33,14 @@ async function initializePlayer() {
 
   // Load extractors using the new method
   await player.extractors.loadMulti(DefaultExtractors);
+
+  // Register YouTubei extractor
+  await player.extractors.register(YoutubeiExtractor, {
+    // Optional: Add cookie if you want to use authenticated features
+    // cookie: "YOUR_YOUTUBE_COOKIE",
+    // Optional: Override bridge mode if needed
+    // overrideBridgeMode: "ytmusic", // or "yt"
+  });
 
   setupPlayerEvents(player);
 }

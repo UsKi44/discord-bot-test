@@ -22,8 +22,6 @@ for (const folder of commandFolders) {
     const filePath = path.join(commandsPath, file);
     const command = require(filePath);
 
-    console.log(`Loading command: ${file}`);
-
     if ("data" in command && "execute" in command) {
       commands.push(command.data.toJSON());
     } else {
