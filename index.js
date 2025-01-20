@@ -100,3 +100,16 @@ for (const folder of commandFolders) {
     }
   }
 }
+
+// Add error handling that doesn't expose sensitive details
+client.on("error", (error) => {
+  console.error("An error occurred:", error.message);
+  // Don't log the full error stack in production
+});
+
+// Sanitize logging
+client.on("interactionCreate", async (interaction) => {
+  // Log only non-sensitive information
+  console.log(`Command executed: ${interaction.commandName}`);
+  // Don't log full interaction object
+});
