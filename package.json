@@ -1,13 +1,16 @@
 {
-  "name": "discord-bot",
-  "version": "1.0.0",
-  "description": "Discord Bot (test)",
-  "main": "index.js",
-  "scripts": {
+"name": "discord-bot",
+"version": "1.0.0",
+"description": "Discord Bot (test)",
+"main": "index.js",
+"scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --no-experimental-fetch index.js",
-    "build": "echo 'No build step required'"
-  },
+    "build": "npm install"
+},
+"railway": {
+    "skipBuild": true
+},
   "author": "Luka (UsKi44)",
   "license": "ISC",
   "dependencies": {
