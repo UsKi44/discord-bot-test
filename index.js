@@ -1,4 +1,4 @@
-require("dotenv").config({ path: ".env.test" });
+require("dotenv").config();
 
 const fs = require("node:fs");
 const path = require("node:path");
@@ -8,6 +8,7 @@ const { DefaultExtractors } = require("@discord-player/extractor");
 const libsodium = require("libsodium-wrappers");
 const setupPlayerEvents = require("./events/playerEvents");
 const { YoutubeiExtractor } = require("discord-player-youtubei");
+const http = require("http");
 
 const client = new Client({
   intents: [
@@ -103,8 +104,9 @@ for (const folder of commandFolders) {
 
 // Add error handling that doesn't expose sensitive details
 client.on("error", (error) => {
-  console.error("An error occurred:", error.message);
-  // Don't log the full error stack in production
+  console.error("Discord client error:", error.message);
+  // Add timestamp to logs
+  console.error(`Time: ${new Date().toISOString()}`);
 });
 
 // Sanitize logging
@@ -113,3 +115,28 @@ client.on("interactionCreate", async (interaction) => {
   console.log(`Command executed: ${interaction.commandName}`);
   // Don't log full interaction object
 });
+
+// Add some basic production checks and error handling
+process.on("unhandledRejection", (error) => {
+  console.error("Unhandled promise rejection:", error.message);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught exception:", error.message);
+  // Gracefully shutdown in case of uncaught exceptions
+  process.exit(1);
+});
+
+// Add a ready event log to confirm successful startup
+client.once("ready", () => {
+  console.log(`Bot is ready! Logged in as ${client.user.tag}`);
+  console.log(`Running in ${process.env.NODE_ENV || "development"} mode`);
+});
+
+// Add this before client.login
+const server = http.createServer((req, res) => {
+  res.writeHead(200);
+  res.end("Bot is running!");
+});
+
+server.listen(process.env.PORT || 3000);
