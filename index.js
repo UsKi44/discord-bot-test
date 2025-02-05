@@ -130,7 +130,12 @@ process.on("uncaughtException", (error) => {
 // Add a ready event log to confirm successful startup
 client.once("ready", () => {
   console.log(`Bot is ready! Logged in as ${client.user.tag}`);
-  console.log(`Running in ${process.env.NODE_ENV || "development"} mode`);
+  console.log("Running in production mode");
+
+  // Add this explicit success signal
+  if (process.send) {
+    process.send("ready");
+  }
 });
 
 // Add this before client.login
