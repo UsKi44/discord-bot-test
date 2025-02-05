@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
+    "start": "node --no-experimental-fetch index.js",
     "build": "echo 'No build step required'"
   },
   "author": "Luka (UsKi44)",
@@ -23,5 +23,8 @@
     "play-dl": "^1.9.7",
     "prism-media": "^1.3.5",
     "string-progressbar": "^1.0.4"
+  },
+  "engines": {
+    "node": ">=18.x"
   }
 }
