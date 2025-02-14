@@ -8,7 +8,6 @@ const { DefaultExtractors } = require("@discord-player/extractor");
 const libsodium = require("libsodium-wrappers");
 const setupPlayerEvents = require("./events/playerEvents");
 const { YoutubeiExtractor } = require("discord-player-youtubei");
-const http = require("http");
 
 const client = new Client({
   intents: [
@@ -101,50 +100,3 @@ for (const folder of commandFolders) {
     }
   }
 }
-
-// Add error handling that doesn't expose sensitive details
-client.on("error", (error) => {
-  console.error("Discord client error:", error.message);
-  // Add timestamp to logs
-  console.error(`Time: ${new Date().toISOString()}`);
-});
-
-// Sanitize logging
-client.on("interactionCreate", async (interaction) => {
-  // Log only non-sensitive information
-  console.log(`Command executed: ${interaction.commandName}`);
-  // Don't log full interaction object
-});
-
-// Add some basic production checks and error handling
-process.on("unhandledRejection", (error) => {
-  console.error("Unhandled promise rejection:", error.message);
-});
-
-process.on("uncaughtException", (error) => {
-  console.error("Uncaught exception:", error.message);
-  // Gracefully shutdown in case of uncaught exceptions
-  process.exit(1);
-});
-
-// Add a ready event log to confirm successful startup
-client.once("ready", () => {
-  console.log(`Bot is ready! Logged in as ${client.user.tag}`);
-  console.log("Running in production mode");
-
-  // Add this explicit success signal
-  if (process.send) {
-    process.send("ready");
-  }
-});
-
-// Add this before client.login
-const server = http.createServer((req, res) => {
-  res.writeHead(200);
-  res.end("Bot is running!");
-});
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
