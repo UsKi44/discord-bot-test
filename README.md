@@ -19,14 +19,12 @@ Before setting up the bot, make sure you have:
 
 ⚠️ **Important Security Information:**
 
-- Never commit your `.env.test` file to version control
-- Add `.env.test` to your `.gitignore` file
 - Never share your bot token or other credentials publicly
 - Regularly rotate your bot token if you suspect it has been compromised
 
 ## Required Configuration
 
-1. Create a `.env.test` file in the root directory with the following variables:
+1. Create a `.env` file in the root directory with the following variables:
 
 ```env
 DISCORD_TOKEN=your_bot_token
